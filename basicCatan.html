@@ -19,7 +19,7 @@ position: absolute;
       <canvas id="mycanvas"></canvas> 
     </p>
 <audio autoplay loop>
-<source src = "/storage/emulated/0/music/Drum Pad Machine records/happy videogame.wav" style = (audio/wav)>
+
 </audio>
  </body>
  <!img id = "deto" src = "/storage/emulated/0/20200128_075238.png" width = 75, height = 75>
@@ -43,8 +43,6 @@ position: absolute;
 
 hexagon = function(x, y, size){
 
-
-
 	xa = x;
 	xb = ( x + (size * pow(3, 1/2) / 2));
 	xc = ( x - (size * pow(3, 1/2) / 2));
@@ -66,8 +64,6 @@ hexagon = function(x, y, size){
 
 	endShape();
 	
-
-
 };
 
 tileColor = function(num){
@@ -99,42 +95,117 @@ tileColor = function(num){
 		fill(0);
 	}
 
-
 };
 
-	dice1 = floor(random(1, 7));
-	dice2 = floor(random(1, 7));
-
-
-dice = function(amnt, size){
+dice = function(){
 
 	fill(0);
-	rectRight = 350;
-	rectBottom = 200;
-
-
-
-	rect(0, 0, rectRight, rectBottom);
+	rect(0, 0, diceBoxRight, diceBoxBottom);
 	
 	fill(250, 250, 250);
-	text(dice1, 100, 100);
-	text(dice2, 150, 100);
+	text("roll new dice", 60, 50);
+	text([str(dice1) + "+" + str(dice2) + "=" + str(diceTotal)], 100, 100);
+	
+};
+
+
+drawNewCard = function(drawArray, heldArray, deckSize){
+
+cardIndex = floor(random(deckSize));
+
+while (drawArray[cardIndex] == 0){
+	cardIndex = floor(random(deckSize));
+};
+
+drawArray[cardIndex] = 0;
+heldArray[cardIndex] = 1;
+
+return cardIndex;
+
 
 };
 
 
+mouseReleased = function(){
+	if (mouseX <= diceBoxRight && mouseY <= diceBoxBottom){
+		dice1 = diceRoll(7);
+		dice2 = diceRoll(7);
+		diceTotal = dice1 + dice2;
+		dice();
+	}
+
+	else if (mouseX >= devCardBoxLeft && mouseY <= diceBoxBottom){
+		NcardsLeft --;
+		
+		newDevCard = drawNewCard(drawDevDeck, heldDevDeck, NdevCards);
+		if (newDevCard <= Nknights-1){
+                devType = "Knight";
+
+            } else if (newDevCard <= Nknights-1 + Nvp) {
+				devType = "VP";
+                
+            } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly){
+				devType = "Monopoly";
+                
+            } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly + NroadBuilding){
+                devType = "Road Building";
+                
+            } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly + NroadBuilding + NyearOfPlenty){
+                devType = "Year o' Plenty";
+                
+            } else {
+                devType = "No card";
+                
+            };
+	};
+	fill(0);
+	rect(devCardBoxLeft, 0, 1300, diceBoxBottom);
+	fill(250, 250, 250);
+	text("new Dev Card", devCardBoxLeft + 20, 50);
+	text(devType, devCardBoxLeft + 20, 100);
+	text(NcardsLeft, devCardBoxLeft + 20, 150);
+
+
+
+};
+diceRoll = function(range){
+	return(floor(random(1, range)));
+
+};
 
 // there are 19 hexes in catan
+
+// out of draw function variable initialization
+
+	diceBoxRight = 350;
+	diceBoxBottom = 200;
+	devCardBoxLeft = 1150;
+	devCardBoxBottom = 200;
+	// 25 development cards: 14 knight cards, 5 victory point cards, 2 road building, 2 year of plenty, and 2 monopoly.
+	Nknights = 14;
+	Nvp = 5;
+	NroadBuilding = 2;
+	NyearOfPlenty = 2;
+	Nmonopoly = 2;
+	NdevCards = Nknights + Nvp + NroadBuilding + NyearOfPlenty + Nmonopoly;
+	drawDevDeck = [];
+    heldDevDeck = [];
+	newDevCard = NdevCards + 1;
+	NcardsLeft = NdevCards;
+
+	for (i = 0; i < NdevCards; i++){
+			drawDevDeck[i] = 1;
+            heldDevDeck[i] = 0;
+
+	};
+
+
+
+
 
 
 draw = function(){
 
-	function mouseClicked() {
-   		dice1 = 1;
-		dice2 = 1;
-
-	}
-	
 
 	strokeWeight(10);
 	textSize(50);
@@ -226,7 +297,9 @@ draw = function(){
 
 		// end of for loop
 	}
-	dice(2, 3);
+	
+	
+	dice();
 
 	// end of draw function
 }
