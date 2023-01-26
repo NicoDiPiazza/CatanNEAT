@@ -22,8 +22,7 @@ position: absolute;
 
 </audio>
  </body>
- <!img id = "deto" src = "/storage/emulated/0/20200128_075238.png" width = 75, height = 75>
- <!img id = "detom" src = "/storage/emulated/0/DCIM/Screenshots/20200324_150334.png" width = 75, height = 75>
+
 
  <!-- Run all the JavaScript stuff -->
  <!-- Include the processing.js library -->
@@ -98,13 +97,14 @@ tileColor = function(num){
 };
 
 dice = function(){
-
+// the box
 	fill(0);
 	rect(0, 0, diceBoxRight, diceBoxBottom);
 	
 	fill(250, 250, 250);
 	text("roll new dice", 60, 50);
 	text([str(dice1) + "+" + str(dice2) + "=" + str(diceTotal)], 100, 100);
+	
 	
 };
 
@@ -122,8 +122,28 @@ heldArray[cardIndex] = 1;
 
 return cardIndex;
 
+};
+
+num2resourceDecoder = function(num){
+	
+	if (num == 1){
+		resource = ("ore");
+		
+	} else if(num == 2){
+		resource = ("sheep");
+	} else if(num == 3){
+		resource = ("wood");
+	} else if(num == 4){
+		resource = ("wheat");
+	} else if(num == 5){
+		resource = ("brick");
+	};
+	
+
+return resource;
 
 };
+
 
 
 mouseReleased = function(){
@@ -131,13 +151,23 @@ mouseReleased = function(){
 		dice1 = diceRoll(7);
 		dice2 = diceRoll(7);
 		diceTotal = dice1 + dice2;
+		rolledCards = [];
 		dice();
+		for ( i = 0; i <= setupAr.length - 1; i++){
+			if (diceTotal == setupNum[i]){
+				rolledCards.push(num2resourceDecoder(setupAr[i]));
+
+			}
+		};
 	}
 
 	else if (mouseX >= devCardBoxLeft && mouseY <= diceBoxBottom){
-		NcardsLeft --;
+		if (NcardsLeft > 0){
+			NcardsLeft --;
+			newDevCard = drawNewCard(drawDevDeck, heldDevDeck, NdevCards);
+
+		};
 		
-		newDevCard = drawNewCard(drawDevDeck, heldDevDeck, NdevCards);
 		if (newDevCard <= Nknights-1){
                 devType = "Knight";
 
@@ -228,9 +258,17 @@ draw = function(){
 	// 6 = dessert
 
 	// set up arrangement
-	setupAr =  [3, 2, 2, 4, 1, 4, 3,  3, 5, 6, 1, 4, 4,  1,  3, 2,  5, 2, 5 ];
+	setupAr =  [3, 2, 2,
+			  4, 1, 4, 3,
+			3, 5, 6, 1, 4,
+			  4,  1,  3, 2,
+				5, 2, 5 ];
 	// set up numbers ( die rolls )
-	setupNum = [6, 3, 8, 2, 4, 5, 10, 5, 9, 7, 6, 9, 10, 11, 3, 12, 8, 4, 11];
+	setupNum = [6, 3, 8,
+			  2, 4, 5, 10,
+			5, 9, 7, 6, 9,
+			  10, 11, 3, 12,
+				8, 4, 11];
 
 
 
@@ -247,7 +285,7 @@ draw = function(){
 
 	
 
-	for ( i = 0; i <= 18; i++){
+	for ( i = 0; i <= setupAr.length - 1; i++){
 		
 		tileColor(setupAr[i]);
 		if (i <= 2){
