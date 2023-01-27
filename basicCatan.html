@@ -147,6 +147,7 @@ return resource;
 
 
 mouseReleased = function(){
+	// rolling new dice
 	if (mouseX <= diceBoxRight && mouseY <= diceBoxBottom){
 		dice1 = diceRoll(7);
 		dice2 = diceRoll(7);
@@ -159,9 +160,8 @@ mouseReleased = function(){
 
 			}
 		};
-	}
-
-	else if (mouseX >= devCardBoxLeft && mouseY <= diceBoxBottom){
+		// drawing dev card
+	} else if (mouseX >= devCardBoxLeft && mouseY <= diceBoxBottom){
 		if (NcardsLeft > 0){
 			NcardsLeft --;
 			newDevCard = drawNewCard(drawDevDeck, heldDevDeck, NdevCards);
@@ -171,22 +171,38 @@ mouseReleased = function(){
 		if (newDevCard <= Nknights-1){
                 devType = "Knight";
 
-            } else if (newDevCard <= Nknights-1 + Nvp) {
+        } else if (newDevCard <= Nknights-1 + Nvp) {
 				devType = "VP";
                 
-            } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly){
+        } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly){
 				devType = "Monopoly";
                 
-            } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly + NroadBuilding){
+        } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly + NroadBuilding){
                 devType = "Road Building";
                 
-            } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly + NroadBuilding + NyearOfPlenty){
+        } else if(newDevCard <= Nknights-1 + Nvp + Nmonopoly + NroadBuilding + NyearOfPlenty){
                 devType = "Year o' Plenty";
                 
-            } else {
+        } else {
                 devType = "No card";
                 
-            };
+        };
+		
+		playerMat[turnTracker].devCards.push(devType);
+
+			// moving to a new turn
+	} else if (mouseY >= newTurnBoxTop && mouseX <= newTurnBoxRight) {
+		if (turnTracker < Nplayers - 1){
+			turnTracker++;
+		} else {
+
+			turnTracker = 0;
+		}
+		fill(250, 0, 0);
+		rect(0, newTurnBoxTop, newTurnBoxRight, 100);
+		fill(250, 250, 250);
+		text(turnTracker, newTurnBoxRight - 100, newTurnBoxTop + 50);
+
 	};
 	fill(0);
 	rect(devCardBoxLeft, 0, 1300, diceBoxBottom);
@@ -203,7 +219,18 @@ diceRoll = function(range){
 
 };
 
-// there are 19 hexes in catan
+// Class initialization
+
+class Player {
+  constructor(name, devCards) {
+    this.name = name;
+	this.devCards = [];
+  }
+};
+
+
+
+
 
 // out of draw function variable initialization
 
@@ -211,6 +238,8 @@ diceRoll = function(range){
 	diceBoxBottom = 200;
 	devCardBoxLeft = 1150;
 	devCardBoxBottom = 200;
+	newTurnBoxTop = 900;
+	newTurnBoxRight = 200;
 	// 25 development cards: 14 knight cards, 5 victory point cards, 2 road building, 2 year of plenty, and 2 monopoly.
 	Nknights = 14;
 	Nvp = 5;
@@ -228,6 +257,17 @@ diceRoll = function(range){
             heldDevDeck[i] = 0;
 
 	};
+
+	Nplayers = 6;
+	playerMat = [];
+
+
+	for (i = 0; i < Nplayers; i++){
+		newPlayer = new Player(['player' + str(i)]);
+		playerMat.push(newPlayer);
+	};
+
+	turnTracker = 0;
 
 
 
@@ -280,7 +320,7 @@ draw = function(){
 	
 
 
-
+ // there are 19 hexes in catan
 	// the 19 hexagons
 
 	
@@ -335,8 +375,10 @@ draw = function(){
 
 		// end of for loop
 	}
-	
-	
+	fill(250, 0, 0);
+	rect(0, newTurnBoxTop, newTurnBoxRight, 100);
+	fill(250, 250, 250);
+	text(turnTracker, newTurnBoxRight - 100, newTurnBoxTop + 50);
 	dice();
 
 	// end of draw function
